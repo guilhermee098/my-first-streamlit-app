@@ -1,11 +1,43 @@
 import streamlit as st
 import pandas as pd
+import os
+import currency_fetch
+import get_users_information
 import numpy as np
 from streamlit_option_menu import option_menu
 
 def show_home():
-    st.subheader("Settings")
-    st.write("Aqui estão as configurações.")
+    st.subheader("Página inicial")
+    import os
+
+
+    st.write("Aqui estão algumas chamadas de API...")
+    st.write("Por exemplo, você pode chamar uma API realizar a conversão de moedas.")
+    # create two floating lists with some currencies including USD, EUR, GBP, JPY, CNY and BRL
+    currencies = ['USD', 'EUR', 'GBP', 'JPY', 'CNY', 'BRL']
+    # create a selectbox to choose the currency
+    currency = st.selectbox('Selecione a moeda', currencies)
+    # create another selectbox to choose the currency to convert to 
+    currency_to = st.selectbox('Selecione a moeda para converter', [c for c in currencies if c != currency])
+    # create a text input to enter the amount of currency to convert
+    amount = st.number_input('Digite o valor a ser convertido', value=1)
+    # create a button to perform the conversion
+    if st.button('Converter'):
+        # perform the conversion here
+        converted_amount = currency_fetch.currency_fetch(currency, currency_to, amount)
+        st.write(f'{amount} {currency} é o mesmo que {converted_amount} {currency_to}')
+
+    user_info = get_users_information.get_users_information()
+    if 'city' in user_info:
+        user_city = user_info['city']
+        user_org = user_info['org']
+        user_region = user_info['region']
+        user_country = user_info['country']
+        st.write(f"Ou por exemplo, conseguimos saber que você está localizado em {user_city}, certo?")
+        st.write(f"Isso é uma informação que conseguimos através do seu IP. Além da organização ({user_org}), região ({user_region}) e país ({user_country}).")
+    else:
+        st.write("Informação de cidade não disponível")
+
     
 
 def show_settings():
